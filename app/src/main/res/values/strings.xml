@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Ecocycle</string>
+    <string name="email_check">Email tidak sesuai</string>
+    <string name="pass_check">Password tidak boleh kurang dari 8 karakter</string>
+    <string name="intro_1">Lorem ipsum dolor sit amet consectetur. Urna hac imperdiet orci erat aliquam magna cursus metus. In tortor volutpat varius sapien. Lacus risus a tincidunt dolor ac nulla. Id auctor aenean arcu pellentesque vitae.</string>
+    <string name="intro_2">Lorem ipsum dolor sit amet consectetur.</string>
+    <string name="email">Email</string>
+    <string name="password">Kata sandi</string>
+    <string name="login">Masuk</string>
+    <string name="Username">Nama Pengguna</string>
+    <string name="signup">Daftar</string>
+    <string name="start">Mulai</string>
+    <string name="account_check">Sudah Punya Akun?</string>
+    <string name="to_login">Masuk Disini</string>
+    <string name="to_signup">Daftar Sekarang</string>
+    <string name="welcome_text">Welcome\nto\nEcocycle\n\nJoin Us</string>
+    <string name="desc_login">Tombol masuk</string>
+    <string name="desc_image">Gambar</string>
+    <string name="desc_signup">Tombol daftar</string>
+    <string name="desc_start">Tombol memulai aplikasi</string>
+    <string name="desc_drag_left">Usap kiri untuk melanjutkan</string>
+    <string name="desc_to_signup">Tombol ke menu daftar</string>
+    <string name="desc_to_login">Tombol ke menu masuk</string>
+</resources>
