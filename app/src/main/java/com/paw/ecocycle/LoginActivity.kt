@@ -2,6 +2,7 @@ package com.paw.ecocycle
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +22,9 @@ class LoginActivity : AppCompatActivity() {
 
         //setupView()
         playAnimation()
+        binding.btnLogin.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
 
     private fun setupView() {
@@ -47,14 +51,14 @@ class LoginActivity : AppCompatActivity() {
             ObjectAnimator.ofFloat(binding.edLoginEmail, View.ALPHA, 1f).setDuration(100)
         val password =
             ObjectAnimator.ofFloat(binding.edLoginPassword, View.ALPHA, 1f).setDuration(100)
-        val signup = ObjectAnimator.ofFloat(binding.btnSignup, View.ALPHA, 1f).setDuration(100)
+        val login = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(100)
 
 
         AnimatorSet().apply {
             playSequentially(
                 email,
                 password,
-                signup
+                login
             )
             startDelay = 100
         }.start()
