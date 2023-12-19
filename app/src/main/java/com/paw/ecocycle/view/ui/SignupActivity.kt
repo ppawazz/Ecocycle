@@ -11,15 +11,6 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-//import com.google.android.gms.auth.api.signin.GoogleSignIn
-//import com.google.android.gms.auth.api.signin.GoogleSignInClient
-//import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-//import com.google.android.gms.common.api.ApiException
-//import com.google.firebase.Firebase
-//import com.google.firebase.auth.FirebaseAuth
-//import com.google.firebase.auth.FirebaseUser
-//import com.google.firebase.auth.GoogleAuthProvider
-//import com.google.firebase.auth.auth
 import com.paw.ecocycle.databinding.ActivitySignupBinding
 import com.paw.ecocycle.utils.ResultState
 import com.paw.ecocycle.utils.showToast
@@ -69,9 +60,6 @@ class SignupActivity : AppCompatActivity() {
                             pbSignup.isVisible = false
                             showToast("Anda Berhasil Membuat Akun, Silahkan Login")
                             startActivity(Intent(this@SignupActivity, LoginActivity::class.java))
-//                            val toLogin =
-//                                Intent(this@SignupActivity, LoginActivity::class.java)
-//                            startActivity(toLogin)
                         }
 
                         else -> {}

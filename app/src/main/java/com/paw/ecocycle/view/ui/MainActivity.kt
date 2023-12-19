@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityMainBinding
 import com.paw.ecocycle.view.viewmodel.MainViewModel
@@ -22,8 +23,11 @@ import com.paw.ecocycle.view.viewmodel.ViewModelFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var factory: ViewModelFactory
-    private val viewmodel: MainViewModel by viewModels { factory }
+//    private lateinit var factory: ViewModelFactory
+//    private val viewModel: MainViewModel by viewModels { factory }
+    private val viewModel by viewModels<MainViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
 
     private var isExpanded = false
     private val fromBottomfabAnim: Animation by lazy {
@@ -45,6 +49,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.title = "My Store"
         //setupView()
+//        viewModel.getSession().observe(this) { user ->
+//            binding.tvHello.text = "Hello, ${user.name}"
+//        }
         binding.fabMenu.setOnClickListener {
             if (isExpanded) {
                 shrinkFab()
@@ -55,11 +62,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnStartRecycle.setOnClickListener {
             binding.fabMenu.performClick()
         }
-        setupViewModel()
-    }
-
-    private fun setupViewModel() {
-        factory = ViewModelFactory.getInstance(this)
     }
 
     private fun shrinkFab() {
@@ -89,25 +91,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
-    private fun showExitDialog() {
-        val back = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                AlertDialog.Builder(this@MainActivity)
-                    .setMessage("Apakah Anda yakin ingin keluar?")
-                    .setPositiveButton("Ya") { _, _ ->
-                        viewmodel.logout()
-                        finishAffinity()
-                    }
-                    .setNegativeButton("Tidak", null)
-                    .show()
-            }
-        }
-
-        // Menambahkan callback ke dispatcher
-        this.onBackPressedDispatcher.addCallback(this, back)
-    }
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.option_menu, menu)
         return true
@@ -120,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menu_2 -> {
-                showExitDialog()
+                viewModel.logout()
             }
         }
         return true

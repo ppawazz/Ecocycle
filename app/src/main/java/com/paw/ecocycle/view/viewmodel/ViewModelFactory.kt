@@ -22,6 +22,10 @@ class ViewModelFactory(private val repository: MainRepository): ViewModelProvide
                 SignupViewModel(repository) as T
             }
 
+            modelClass.isAssignableFrom(SplashViewModel::class.java) -> {
+                SplashViewModel(repository) as T
+            }
+
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }
