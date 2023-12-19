@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Eco Cycle"
+        android:text="Logo"
         android:textSize="100sp"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
