@@ -1,14 +1,13 @@
-package com.paw.ecocycle.custome
+package com.paw.ecocycle.view.custom
 
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Patterns
 import androidx.appcompat.widget.AppCompatEditText
 import com.paw.ecocycle.R
 
-class CustomeEmail : AppCompatEditText {
+class CustomPassword : AppCompatEditText {
 
     constructor(context: Context) : super(context) {
         init()
@@ -33,10 +32,10 @@ class CustomeEmail : AppCompatEditText {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                error = if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
-                    context.getString(R.string.email_check)
+                if (s.toString().length < 8) {
+                    setError(context.getString(R.string.pass_check), null)
                 } else {
-                    null
+                    error = null
                 }
             }
 

@@ -1,4 +1,4 @@
-package com.paw.ecocycle
+package com.paw.ecocycle.view.ui
 
 import android.content.Intent
 import android.os.Build

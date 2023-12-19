@@ -1,4 +1,4 @@
-package com.paw.ecocycle
+package com.paw.ecocycle.view.ui
 
 import android.content.Intent
 import android.os.Build
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityWelcomeBinding
 
 class WelcomeActivity : AppCompatActivity(), View.OnClickListener {
