@@ -70,8 +70,9 @@ class LoginActivity : AppCompatActivity() {
                                 setTitle("Berhasil")
                                 setMessage("Anda Berhasil Login")
                                 setPositiveButton("Lanjut") { _, _ ->
-                                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                                    finish()
+                                    val toMain = Intent(this@LoginActivity, MainActivity::class.java)
+                                    toMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(toMain)
                                 }
                                 create()
                                 show()

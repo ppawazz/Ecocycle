@@ -10,13 +10,10 @@ import com.paw.ecocycle.R
 import com.paw.ecocycle.view.viewmodel.SplashViewModel
 import com.paw.ecocycle.view.viewmodel.ViewModelFactory
 
-class Splash_Activity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
-//    private lateinit var factory: ViewModelFactory
-//    private val viewModel: SplashViewModel by viewModels { factory }
-    private val viewModel by viewModels<SplashViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var factory: ViewModelFactory
+    private val viewModel: SplashViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,22 +25,23 @@ class Splash_Activity : AppCompatActivity() {
             viewModel.getSession().observe(this) { user ->
                 if (!user.isLogin) {
                     startActivity(Intent(this, StartActivity::class.java))
+                    finish()
                 } else {
                     startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                 }
             }
-            finish()
         }, SPLASH_TIME)
 
-        //setupViewModel()
+        setupViewModel()
 
     }
 
-//    private fun setupViewModel() {
-//        factory = ViewModelFactory.getInstance(this)
-//    }
+    private fun setupViewModel() {
+        factory = ViewModelFactory.getInstance(this)
+    }
 
     companion object {
-        const val SPLASH_TIME = 3000L
+        const val SPLASH_TIME = 2000L
     }
 }

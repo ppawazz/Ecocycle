@@ -1,10 +1,12 @@
 package com.paw.ecocycle.view.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowInsets
@@ -12,22 +14,24 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityMainBinding
+import com.paw.ecocycle.utils.getImageUri
 import com.paw.ecocycle.view.viewmodel.MainViewModel
 import com.paw.ecocycle.view.viewmodel.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-//    private lateinit var factory: ViewModelFactory
-//    private val viewModel: MainViewModel by viewModels { factory }
-    private val viewModel by viewModels<MainViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var factory: ViewModelFactory
+    private val viewModel: MainViewModel by viewModels { factory }
+
+    private var selectedImageUri: Uri? = null
 
     private var isExpanded = false
     private val fromBottomfabAnim: Animation by lazy {
@@ -62,8 +66,52 @@ class MainActivity : AppCompatActivity() {
         binding.btnStartRecycle.setOnClickListener {
             binding.fabMenu.performClick()
         }
+        setupViewModel()
+        setupAction()
+    }
+    
+    private fun postImage() {
+        viewModel.postImage(file)
     }
 
+    private fun setupAction() {
+        binding.fabCamera.setOnClickListener {
+            startCamera()
+        }
+        binding.fabGallery.setOnClickListener {
+            startGallery()
+        }
+    }
+
+    private fun startCamera() {
+        selectedImageUri = getImageUri(this)
+        launcherIntentCamera.launch(selectedImageUri)
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            //showImage()
+        }
+    }
+    private fun startGallery() {
+        launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    private val launcherGallery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            selectedImageUri = uri
+        } else {
+            Log.d("Photo Picker", "No media selected")
+        }
+    }
+
+    private fun setupViewModel() {
+        factory = ViewModelFactory.getInstance(this)
+    }
     private fun shrinkFab() {
         binding.fabMenu.startAnimation(rotateAntiClockWiseAnim)
         binding.fabCamera.startAnimation(toBottomfabAnim)
@@ -104,6 +152,9 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menu_2 -> {
                 viewModel.logout()
+                val toStart = Intent(this, StartActivity::class.java)
+                toStart.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(toStart)
             }
         }
         return true

@@ -2,12 +2,18 @@ package com.paw.ecocycle.model
 
 import android.util.Log
 import androidx.lifecycle.liveData
+import com.google.gson.Gson
 import com.paw.ecocycle.model.local.datastore.UserModel
 import com.paw.ecocycle.model.local.datastore.UserPreference
 import com.paw.ecocycle.model.remote.service.ApiService
 import com.paw.ecocycle.utils.ResultState
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
+import java.io.File
 
 class MainRepository private constructor(
     private val userPreference: UserPreference,
@@ -32,6 +38,24 @@ class MainRepository private constructor(
             emit(ResultState.Success(successResponse))
         } catch (e: HttpException) {
             Log.d(TAG, "register: ${e.message.toString()}")
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
+    fun postImage(imageFile: File) = liveData {
+        emit(ResultState.Loading)
+        val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
+        val multipartBody = MultipartBody.Part.createFormData(
+            "photo",
+            imageFile.name,
+            requestImageFile
+        )
+        try {
+            val successResponse =
+                apiService.postImage(multipartBody)
+            emit(ResultState.Success(successResponse))
+        } catch (e: HttpException) {
+            Log.d(TAG, "post image: ${e.message.toString()}")
             emit(ResultState.Error(e.message.toString()))
         }
     }

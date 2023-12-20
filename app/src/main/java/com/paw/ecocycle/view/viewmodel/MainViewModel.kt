@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.paw.ecocycle.model.MainRepository
 import com.paw.ecocycle.model.local.datastore.UserModel
 import kotlinx.coroutines.launch
+import java.io.File
 
 class MainViewModel(private val repository: MainRepository) : ViewModel() {
     fun getSession(): LiveData<UserModel> {
@@ -18,4 +19,7 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
             repository.logout()
         }
     }
+
+    fun postImage(file: File) =
+        repository.postImage(file)
 }

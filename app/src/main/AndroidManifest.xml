@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Ecocycle"
         tools:targetApi="31">
         <activity
-            android:name=".view.ui.Splash_Activity"
+            android:name=".view.ui.SplashActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
