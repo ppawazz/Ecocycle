@@ -1,5 +1,6 @@
 package com.paw.ecocycle.view.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -20,6 +21,5 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
         }
     }
 
-    fun postImage(file: File) =
-        repository.postImage(file)
+    fun postImage(token: String, file: File) = repository.postImage(token, file)
 }

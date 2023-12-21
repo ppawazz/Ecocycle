@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
@@ -17,13 +18,20 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityMainBinding
+import com.paw.ecocycle.utils.ResultState
 import com.paw.ecocycle.utils.getImageUri
+import com.paw.ecocycle.utils.reduceFileImage
+import com.paw.ecocycle.utils.showToast
+import com.paw.ecocycle.utils.uriToFile
 import com.paw.ecocycle.view.viewmodel.MainViewModel
 import com.paw.ecocycle.view.viewmodel.ViewModelFactory
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,15 +55,18 @@ class MainActivity : AppCompatActivity() {
         AnimationUtils.loadAnimation(this, R.anim.rotate_anti_clock_wise)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.title = "My Store"
         //setupView()
-//        viewModel.getSession().observe(this) { user ->
-//            binding.tvHello.text = "Hello, ${user.name}"
-//        }
+
+        viewModel.getSession().observe(this) { user ->
+            binding.tvHello.text = "Hello, ${user.name}"
+        }
+
         binding.fabMenu.setOnClickListener {
             if (isExpanded) {
                 shrinkFab()
@@ -69,11 +80,8 @@ class MainActivity : AppCompatActivity() {
         setupViewModel()
         setupAction()
     }
-    
-    private fun postImage() {
-        viewModel.postImage(file)
-    }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun setupAction() {
         binding.fabCamera.setOnClickListener {
             startCamera()
@@ -83,35 +91,76 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun startCamera() {
         selectedImageUri = getImageUri(this)
         launcherIntentCamera.launch(selectedImageUri)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { isSuccess ->
         if (isSuccess) {
-            //showImage()
+            viewModel.getSession().observe(this) { user ->
+                postImage(user.token)
+            }
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun startGallery() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-        if (uri != null) {
-            selectedImageUri = uri
-        } else {
-            Log.d("Photo Picker", "No media selected")
+        uri?.let {
+            selectedImageUri = it
+            viewModel.getSession().observe(this) {user ->
+                postImage(user.token)
+            }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun postImage(token: String) {
+        selectedImageUri?.let { uri ->
+            val imageFile = uriToFile(uri, this).reduceFileImage()
+            Log.d("Image File", "showImage: ${imageFile.path}")
+
+            viewModel.postImage(token, imageFile).observe(this) { response ->
+                if (response != null) {
+                    when (response) {
+                        is ResultState.Loading -> {
+                            binding.loadAnim.isVisible = true
+                        }
+
+                        is ResultState.Success -> {
+                            binding.loadAnim.isVisible = false
+                            showToast(response.data.message)
+                            val toMain = Intent(this, MainActivity::class.java)
+                            toMain.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(toMain)
+                        }
+
+                        is ResultState.Error -> {
+                            binding.loadAnim.isVisible = false
+                            showToast(response.error)
+                        }
+                    }
+                }
+            }
+        } ?: showToast("Tidak ada gambar")
     }
 
     private fun setupViewModel() {
         factory = ViewModelFactory.getInstance(this)
     }
+
     private fun shrinkFab() {
         binding.fabMenu.startAnimation(rotateAntiClockWiseAnim)
         binding.fabCamera.startAnimation(toBottomfabAnim)

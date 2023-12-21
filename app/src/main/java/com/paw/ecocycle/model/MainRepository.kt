@@ -1,5 +1,6 @@
 package com.paw.ecocycle.model
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.liveData
 import com.google.gson.Gson
@@ -9,6 +10,7 @@ import com.paw.ecocycle.model.remote.service.ApiService
 import com.paw.ecocycle.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -17,7 +19,7 @@ import java.io.File
 
 class MainRepository private constructor(
     private val userPreference: UserPreference,
-    private val apiService: ApiService
+    private val apiService: ApiService,
 ) {
 
     fun login(email: String, password: String) = liveData {
@@ -42,7 +44,7 @@ class MainRepository private constructor(
         }
     }
 
-    fun postImage(imageFile: File) = liveData {
+    fun postImage(token: String, imageFile: File) = liveData {
         emit(ResultState.Loading)
         val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
         val multipartBody = MultipartBody.Part.createFormData(
@@ -52,10 +54,10 @@ class MainRepository private constructor(
         )
         try {
             val successResponse =
-                apiService.postImage(multipartBody)
+                apiService.postImage("Bearer $token", multipartBody)
             emit(ResultState.Success(successResponse))
         } catch (e: HttpException) {
-            Log.d(TAG, "post image: ${e.message.toString()}")
+            Log.d(TAG, "post: ${e.message.toString()}")
             emit(ResultState.Error(e.message.toString()))
         }
     }
@@ -79,7 +81,7 @@ class MainRepository private constructor(
         private var instance: MainRepository? = null
         fun getInstance(
             userPreference: UserPreference,
-            apiService: ApiService
+            apiService: ApiService,
         ): MainRepository =
             instance ?: synchronized(this) {
                 instance ?: MainRepository(userPreference, apiService)

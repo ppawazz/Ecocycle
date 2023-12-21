@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
                             pbLogin.isVisible = false
                             viewmodel.saveSession(
                                 UserModel(
+                                    response.data.loginResult?.name.toString(),
                                     email,
                                     response.data.loginResult?.token.toString(),
                                     true
