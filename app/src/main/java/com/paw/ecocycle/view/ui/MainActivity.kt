@@ -11,17 +11,15 @@ import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowInsets
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityMainBinding
 import com.paw.ecocycle.utils.ResultState
@@ -29,6 +27,7 @@ import com.paw.ecocycle.utils.getImageUri
 import com.paw.ecocycle.utils.reduceFileImage
 import com.paw.ecocycle.utils.showToast
 import com.paw.ecocycle.utils.uriToFile
+import com.paw.ecocycle.view.adapter.ListProductAdapter
 import com.paw.ecocycle.view.viewmodel.MainViewModel
 import com.paw.ecocycle.view.viewmodel.ViewModelFactory
 
@@ -37,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var factory: ViewModelFactory
     private val viewModel: MainViewModel by viewModels { factory }
+    private lateinit var productAdapter: ListProductAdapter
 
     private var selectedImageUri: Uri? = null
 
@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.title = getString(R.string.my_store)
         setupViewModel()
+        setupAdapter()
 
         viewModel.getSession().observe(this) { user ->
             binding.tvHello.text = getString(R.string.Greeting, user.name)
@@ -89,13 +90,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupAdapter() {
+        productAdapter = ListProductAdapter()
+        binding.rvProduct.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = productAdapter
+            setHasFixedSize(true)
+        }
+    }
+
     private fun setupViewModel() {
         factory = ViewModelFactory.getInstance(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun startCamera() {
-        if (allPermissionsGranted()) {
+        if (cameraPermissionGranted()) {
             selectedImageUri = getImageUri(this)
             launcherIntentCamera.launch(selectedImageUri)
         } else {
@@ -114,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun startGallery() {
-        if (allPermissionsGranted()) {
+        if (galleryPermissionGranted()) {
             launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         } else {
             requestGalleryPermission()
@@ -135,7 +145,6 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun postImage() {
-        binding.loadAnim.isVisible = true
         selectedImageUri?.let { uri ->
             val imageFile = uriToFile(uri, this).reduceFileImage()
             Log.d("Image File", "showImage: ${imageFile.path}")
@@ -144,16 +153,16 @@ class MainActivity : AppCompatActivity() {
                 if (response != null) {
                     when (response) {
                         is ResultState.Loading -> {
-                            binding.loadAnim.isVisible = true
+                            binding.pbMain.isVisible = true
                         }
 
                         is ResultState.Success -> {
-                            binding.loadAnim.isVisible = false
+                            binding.pbMain.isVisible = false
                             showToast(response.data.message)
                         }
 
                         is ResultState.Error -> {
-                            binding.loadAnim.isVisible = false
+                            binding.pbMain.isVisible = false
                             showToast(response.error)
                         }
                     }
@@ -176,46 +185,49 @@ class MainActivity : AppCompatActivity() {
         isExpanded = !isExpanded
     }
 
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
+    private fun cameraPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
             this, Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun galleryPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this, Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private val requestPermissionLauncher =
+    private val requestCameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                Toast.makeText(this, "Permission request granted", Toast.LENGTH_LONG)
-                    .show()
-                hideSystemUI()
+                showToast("Camera permission granted")
                 startCamera()
             } else {
-                Toast.makeText(this, "Permission request denied", Toast.LENGTH_LONG)
-                    .show()
+                showToast("Camera permission denied")
             }
         }
 
     @RequiresApi(Build.VERSION_CODES.Q)
+    private val requestGalleryPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                showToast("Gallery permission granted")
+                startGallery()
+            } else {
+                showToast("Gallery permission denied")
+            }
+        }
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestCameraPermission() {
-        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestGalleryPermission() {
-        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
-
-    private fun hideSystemUI() {
-        @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
-        supportActionBar?.hide()
+        requestGalleryPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
