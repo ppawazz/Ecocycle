@@ -4,27 +4,27 @@ import com.google.gson.annotations.SerializedName
 
 data class UploadResponse(
 
-	@field:SerializedName("data")
-	val data: Data? = null,
+    @field:SerializedName("data")
+    val data: Data? = null,
 
-	@field:SerializedName("message")
-	val message: String? = null
+    @field:SerializedName("message")
+    val message: String? = null
 )
 
 data class Data(
 
-	@field:SerializedName("path")
-	val path: String? = null,
+    @field:SerializedName("path")
+    val path: String? = null,
 
-	@field:SerializedName("createdAt")
-	val createdAt: String? = null,
+    @field:SerializedName("createdAt")
+    val createdAt: String? = null,
 
-	@field:SerializedName("id")
-	val id: Int? = null,
+    @field:SerializedName("id")
+    val id: Int? = null,
 
-	@field:SerializedName("userId")
-	val userId: Int? = null,
+    @field:SerializedName("userId")
+    val userId: Int? = null,
 
-	@field:SerializedName("updatedAt")
-	val updatedAt: String? = null
+    @field:SerializedName("updatedAt")
+    val updatedAt: String? = null
 )
