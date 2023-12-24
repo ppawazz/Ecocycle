@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityMainBinding
+import com.paw.ecocycle.model.remote.response.DataItem
 import com.paw.ecocycle.utils.ResultState
 import com.paw.ecocycle.utils.getImageUri
 import com.paw.ecocycle.utils.reduceFileImage
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var factory: ViewModelFactory
     private val viewModel: MainViewModel by viewModels { factory }
-    private lateinit var productAdapter: ListProductAdapter
 
     private var selectedImageUri: Uri? = null
 
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.title = getString(R.string.my_store)
         setupViewModel()
-        setupAdapter()
+        binding.rvProduct.layoutManager = LinearLayoutManager(this)
 
         viewModel.getSession().observe(this) { user ->
             binding.tvHello.text = getString(R.string.Greeting, user.name)
@@ -90,12 +90,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAdapter() {
-        productAdapter = ListProductAdapter()
-        binding.rvProduct.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = productAdapter
-            setHasFixedSize(true)
+    private fun getImages() {
+        val adapter = ListProductAdapter()
+        binding.pbMain.isVisible = true
+        viewModel.getImages().observe(this) { response ->
+            binding.pbMain.isVisible = true
+            when (response) {
+                ResultState.Loading -> {
+                    binding.pbMain.isVisible = true
+                }
+                is ResultState.Error -> {
+                    binding.pbMain.isVisible = false
+                    showToast(response.error)
+                }
+                is ResultState.Success -> {
+                    binding.pbMain.isVisible = false
+                    adapter.submitList(response.data.data)
+                    binding.rvProduct.adapter = adapter
+                }
+            }
         }
     }
 
@@ -148,22 +161,25 @@ class MainActivity : AppCompatActivity() {
         selectedImageUri?.let { uri ->
             val imageFile = uriToFile(uri, this).reduceFileImage()
             Log.d("Image File", "showImage: ${imageFile.path}")
+            binding.pbMain.isVisible = true
 
             viewModel.postImage(imageFile).observe(this) { response ->
+                binding.pbMain.isVisible = false
                 if (response != null) {
                     when (response) {
                         is ResultState.Loading -> {
                             binding.pbMain.isVisible = true
                         }
 
+
+                        is ResultState.Error -> {
+                            showToast(response.error)
+                        }
+
                         is ResultState.Success -> {
                             binding.pbMain.isVisible = false
                             showToast(response.data.message)
-                        }
-
-                        is ResultState.Error -> {
-                            binding.pbMain.isVisible = false
-                            showToast(response.error)
+                            getImages()
                         }
                     }
                 }

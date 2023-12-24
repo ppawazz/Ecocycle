@@ -9,6 +9,7 @@ import com.paw.ecocycle.model.remote.request.RegisterRequest
 import com.paw.ecocycle.model.remote.service.ApiService
 import com.paw.ecocycle.utils.ResultState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -54,10 +55,21 @@ class MainRepository private constructor(
         )
         try {
             val successResponse =
-                apiService.postImage(multipartBody)
+                apiService.postImage(token = "Bearer ${getSession().first().token}", multipartBody)
             emit(ResultState.Success(successResponse))
         } catch (e: HttpException) {
             Log.d(TAG, "post: ${e.message.toString()}")
+            emit(ResultState.Error(e.message.toString()))
+        }
+    }
+
+    fun getImages() = liveData {
+        emit(ResultState.Loading)
+        try {
+            val successResponse = apiService.getImages(token = "Bearer ${getSession().first().token}")
+            emit(ResultState.Success(successResponse))
+        } catch (e: HttpException) {
+            Log.d(TAG, "get: ${e.message.toString()}")
             emit(ResultState.Error(e.message.toString()))
         }
     }

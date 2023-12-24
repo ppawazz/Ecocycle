@@ -5,25 +5,21 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.paw.ecocycle.databinding.ItemProductBinding
-import com.paw.ecocycle.model.remote.response.Data
+import com.paw.ecocycle.model.remote.response.DataItem
 
-class ListProductAdapter: ListAdapter<Data, ListProductAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class ListProductAdapter: ListAdapter<DataItem, ListProductAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
     class MyViewHolder(private val binding: ItemProductBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Data) {
+        fun bind(dataItem: DataItem) {
             binding.apply {
-                tvItemRust.text = data.createdAt
-                tvItemNoRust.text = data.updatedAt
-//                Glide.with(itemView.context)
-//                    .load(market.image)
-//                    .centerCrop()
-//                    .apply(
-//                        RequestOptions
-//                            .placeholderOf(R.drawable.ic_image_loading)
-//                            .error(R.drawable.ic_broken_image)
-//                    )
-//                    .into(ivPhoto)
+                Glide.with(itemView.context)
+                    .load(dataItem.path)
+                    .centerCrop()
+                    .into(ivItemPhoto)
+                tvItemRust.text = dataItem.rusty.toString()
+                tvItemNoRust.text = dataItem.noRust.toString()
             }
         }
     }
@@ -39,12 +35,12 @@ class ListProductAdapter: ListAdapter<Data, ListProductAdapter.MyViewHolder>(DIF
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Data>() {
-            override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataItem>() {
+            override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
+            override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
                 return oldItem == newItem
             }
         }

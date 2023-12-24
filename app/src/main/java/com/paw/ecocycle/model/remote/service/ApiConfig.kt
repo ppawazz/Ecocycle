@@ -10,20 +10,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
-    fun getApiService(token: String, context: Context): ApiService {
-        val loggingInterceptor =
+    fun getApiService(context: Context): ApiService {
+        val loggingInterceptor = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        val authInterceptor = Interceptor { chain ->
-            val req = chain.request()
-            val requestHeaders = req.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-            chain.proceed(requestHeaders)
+        } else {
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
         }
         val client = OkHttpClient.Builder()
             .addInterceptor(ChuckerInterceptor(context))
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)

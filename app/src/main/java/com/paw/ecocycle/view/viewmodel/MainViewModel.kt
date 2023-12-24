@@ -21,4 +21,6 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
     }
 
     fun postImage(file: File) = repository.postImage(file)
+
+    fun getImages() = repository.getImages()
 }
