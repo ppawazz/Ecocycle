@@ -66,7 +66,8 @@ class MainRepository private constructor(
     fun getImages() = liveData {
         emit(ResultState.Loading)
         try {
-            val successResponse = apiService.getImages(token = "Bearer ${getSession().first().token}")
+            val successResponse =
+                apiService.getImages(token = "Bearer ${getSession().first().token}")
             emit(ResultState.Success(successResponse))
         } catch (e: HttpException) {
             Log.d(TAG, "get: ${e.message.toString()}")

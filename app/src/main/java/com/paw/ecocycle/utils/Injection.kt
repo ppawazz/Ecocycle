@@ -5,8 +5,6 @@ import com.paw.ecocycle.model.MainRepository
 import com.paw.ecocycle.model.local.datastore.UserPreference
 import com.paw.ecocycle.model.local.datastore.dataStore
 import com.paw.ecocycle.model.remote.service.ApiConfig
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 object Injection {
     fun provideRepository(context: Context): MainRepository {

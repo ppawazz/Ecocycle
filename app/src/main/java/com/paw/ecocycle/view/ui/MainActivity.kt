@@ -22,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ActivityMainBinding
-import com.paw.ecocycle.model.remote.response.DataItem
 import com.paw.ecocycle.utils.ResultState
 import com.paw.ecocycle.utils.getImageUri
 import com.paw.ecocycle.utils.reduceFileImage
@@ -77,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnStartRecycle.setOnClickListener {
             binding.fabMenu.performClick()
         }
+        getImages()
         setupAction()
     }
 
@@ -99,10 +99,12 @@ class MainActivity : AppCompatActivity() {
                 ResultState.Loading -> {
                     binding.pbMain.isVisible = true
                 }
+
                 is ResultState.Error -> {
                     binding.pbMain.isVisible = false
                     showToast(response.error)
                 }
+
                 is ResultState.Success -> {
                     binding.pbMain.isVisible = false
                     adapter.submitList(response.data.data)

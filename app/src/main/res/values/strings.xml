@@ -42,4 +42,6 @@
     <string name="Greeting">Hello, %1$s</string>
     <string name="no_image">No Image</string>
     <string name="hello">Hello, eco</string>
+    <string name="tv_rust_result">Rust: %1$s</string>
+    <string name="tv_norust_result">Non-Rust: %1$s</string>
 </resources>

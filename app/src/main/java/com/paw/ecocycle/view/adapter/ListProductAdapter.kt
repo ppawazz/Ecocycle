@@ -6,20 +6,30 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.paw.ecocycle.R
 import com.paw.ecocycle.databinding.ItemProductBinding
 import com.paw.ecocycle.model.remote.response.DataItem
 
-class ListProductAdapter: ListAdapter<DataItem, ListProductAdapter.MyViewHolder>(DIFF_CALLBACK) {
+class ListProductAdapter : ListAdapter<DataItem, ListProductAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
-    class MyViewHolder(private val binding: ItemProductBinding): RecyclerView.ViewHolder(binding.root) {
+    class MyViewHolder(private val binding: ItemProductBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(dataItem: DataItem) {
             binding.apply {
                 Glide.with(itemView.context)
                     .load(dataItem.path)
                     .centerCrop()
                     .into(ivItemPhoto)
-                tvItemRust.text = dataItem.rusty.toString()
-                tvItemNoRust.text = dataItem.noRust.toString()
+                tvItemRust.text =
+                    itemView.context.getString(
+                        R.string.tv_rust_result,
+                        dataItem.rusty.toString()
+                    )
+                tvItemNoRust.text =
+                    itemView.context.getString(
+                        R.string.tv_norust_result,
+                        dataItem.noRust.toString()
+                    )
             }
         }
     }
