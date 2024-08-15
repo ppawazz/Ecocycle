@@ -17,14 +17,14 @@ Ecocycle aims to assist workshops in identifying and managing rusted materials b
 ## Application Layout
 
 <p align="center">
+  <img src="https://github.com/user-attachments/assets/1d5f0efc-74fa-424d-b7ee-baaf0f59e176" width="200" alt="Splash">
   <img src="https://github.com/user-attachments/assets/f2c21ba6-4f50-4f9c-a828-eb1cf66634b4" width="200" alt="Get Start">
   <img src="https://github.com/user-attachments/assets/330235db-1e1c-4077-b551-d2deee2c16e6" width="200" alt="Headline 1">
   <img src="https://github.com/user-attachments/assets/3e82aeb3-d44a-4b85-b95a-2fb58e84f58f" width="200" alt="Headline 2">
+  <img src="https://github.com/user-attachments/assets/5dd3c520-df1b-4b77-afde-459de0e6c3ed" width="200" alt="Welcome">
+  <img src="https://github.com/user-attachments/assets/e1e278e8-8d0f-4dba-abf2-541cac919d58" width="200" alt="Signup">
   <img src="https://github.com/user-attachments/assets/fa0f7354-2de1-405a-a01e-af5c13a6e53e" width="200" alt="Login">
   <img src="https://github.com/user-attachments/assets/0b11d528-2fb3-482d-9620-a985b412adb6" width="200" alt="Main">
-  <img src="https://github.com/user-attachments/assets/e1e278e8-8d0f-4dba-abf2-541cac919d58" width="200" alt="Signup">
-  <img src="https://github.com/user-attachments/assets/1d5f0efc-74fa-424d-b7ee-baaf0f59e176" width="200" alt="Splash">
-  <img src="https://github.com/user-attachments/assets/5dd3c520-df1b-4b77-afde-459de0e6c3ed" width="200" alt="Welcome">
 </p>
 
 ## Libraries and Technologies Used
